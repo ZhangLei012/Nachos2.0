@@ -51,13 +51,14 @@ static unsigned int nextTlbIndex=0;
 static unsigned int clockIndex=0;
 static unsigned int nextExchangedPhyPage=0;
 extern BitMap bitMap;
+extern int targetVirtAddr;
 void WriteBackToDisk(int virtAddr){
 
 }
 
 
 int FindNextTlbIndex(){
-	printf("更新tlb");
+	printf("\n更新tlb\n");
 	/*
 	int i=0;
 	for(i=0;i<TLBSize;++i){
@@ -95,7 +96,9 @@ void DemandingPage(int virtAddr){
 		nextPhysPage=nextExchangedPhyPage++;
 		nextExchangedPhyPage%=NumPhysPages;
 	}
+	printf("虚拟页号vpn=%d\n",vpn);
 	machine->pageTable[vpn].physicalPage = nextPhysPage;
+	printf("虚拟页号vpn=%d\n phyPage=%d",vpn,nextPhysPage);
 	machine->pageTable[vpn].valid = TRUE;
 	machine->pageTable[vpn].use = TRUE;
 	machine->pageTable[vpn].dirty = FALSE;
@@ -107,8 +110,8 @@ void DemandingPage(int virtAddr){
 
 void
 PageFaultHandler(){
-		printf("%s\n","处理缺页错误");
-		int virtAddr = machine->registers[PCReg];
+		int virtAddr = targetVirtAddr;
+		printf("处理缺页错误,virtAddr = %d",virtAddr);
 		int vpn = (unsigned) virtAddr / PageSize;
 		TranslationEntry *currentPageTable = machine->pageTable;
 		//如果也页表中有相应的物理页，则更新tlb即可，否则请求调页。

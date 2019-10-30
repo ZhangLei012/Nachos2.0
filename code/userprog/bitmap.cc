@@ -95,7 +95,7 @@ int
 BitMap::Find()
 {
   printf("%s","Using BitMap,find one blank physicalPage!\n");
-    for (int i = numBits-1; i >= 0; i--)
+    for (int i = 0; i <numBits; i++)
 	if (!Test(i)) {
 	    Mark(i);
 	    return i;
