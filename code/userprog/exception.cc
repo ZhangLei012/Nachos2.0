@@ -52,9 +52,7 @@ static unsigned int clockIndex=0;
 static unsigned int nextExchangedPhyPage=0;
 extern BitMap bitMap;
 extern int targetVirtAddr;
-void WriteBackToDisk(int virtAddr){
-
-}
+int pageFaultCounter=0;
 
 
 int FindNextTlbIndex(){
@@ -96,7 +94,8 @@ void DemandingPage(int virtAddr){
 		nextPhysPage=nextExchangedPhyPage++;
 		nextExchangedPhyPage%=NumPhysPages;
 	}
-	printf("虚拟页号vpn=%d\n",vpn);
+	printf("currentExecutable=%d nextPhysPage=%d.",currentThread->space->currentExecutable,nextPhysPage);
+	currentThread->space->currentExecutable->ReadAt(&(machine->mainMemory[nextPhysPage*PageSize]),PageSize,currentThread->space->noffH.code.inFileAddr+vpn*PageSize);
 	machine->pageTable[vpn].physicalPage = nextPhysPage;
 	printf("虚拟页号vpn=%d\n phyPage=%d",vpn,nextPhysPage);
 	machine->pageTable[vpn].valid = TRUE;
@@ -147,7 +146,9 @@ ExceptionHandler(ExceptionType which)
 			}
 			break;
 		case PageFaultException:
+			pageFaultCounter++;
 			PageFaultHandler();
+			printf("总的缺页次数为：%d次。",pageFaultCounter);
 			break;
 	}
 }

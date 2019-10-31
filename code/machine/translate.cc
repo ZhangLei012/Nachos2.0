@@ -37,7 +37,7 @@
 // Routines for converting Words and Short Words to and from the
 // simulated machine's format of little endian.  These end up
 // being NOPs when the host machine is also little endian (DEC and Intel).
-
+int targetVirtAddr;
 unsigned int
 WordToHost(unsigned int word) {
 #ifdef HOST_IS_BIG_ENDIAN
@@ -207,9 +207,10 @@ Machine::Translate(int virtAddr, int* physAddr, int size, bool writing)
 		*/
 // calculate the virtual page number, and offset within the page,
 // from the virtual address
+		targetVirtAddr=virtAddr;
     vpn = (unsigned) virtAddr / PageSize;
     offset = (unsigned) virtAddr % PageSize;
-
+		printf("pageTableSize = %d\n",pageTableSize);
     if (tlb == NULL) {		// => page table => vpn is index into table
 	if (vpn >= pageTableSize) {
 	    DEBUG('a', "virtual page # %d too large for page table size %d!\n",
